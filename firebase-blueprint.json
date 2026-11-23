@@ -1,0 +1,178 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user profile, preferences, and daily free quota state",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "Display name" },
+        "email": { "type": "string", "description": "Account email" },
+        "preferredStyle": { "type": "string", "description": "Default visual style" },
+        "preferredLanguage": { "type": "string", "description": "Default narration/script language" },
+        "dailyQuotaUsed": { "type": "integer", "description": "Generations used today" },
+        "dailyQuotaLimit": { "type": "integer", "description": "Daily free generation limit" },
+        "quotaDateKey": { "type": "string", "description": "YYYY-MM-DD date key for daily quota reset" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "email",
+        "preferredStyle",
+        "preferredLanguage",
+        "dailyQuotaUsed",
+        "dailyQuotaLimit",
+        "quotaDateKey",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "VideoProject": {
+      "title": "VideoProject",
+      "description": "User-owned AI video project containing prompt, script, scenes JSON, status, and local MP4 reference",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Owner UID" },
+        "title": { "type": "string", "description": "Project title" },
+        "mode": { "type": "string", "enum": ["PROMPT", "SCRIPT", "ANIMATE_PHOTO"] },
+        "prompt": { "type": "string", "description": "User prompt or idea" },
+        "script": { "type": "string", "description": "Full narration script" },
+        "aspectRatio": { "type": "string", "enum": ["RATIO_9_16", "RATIO_16_9", "RATIO_1_1"] },
+        "durationSeconds": { "type": "integer", "description": "Target total video duration in seconds" },
+        "visualStyle": { "type": "string", "description": "Visual style label" },
+        "language": { "type": "string", "description": "Script and narration language" },
+        "narrationEnabled": { "type": "boolean", "description": "Whether voice narration is enabled" },
+        "subtitlesEnabled": { "type": "boolean", "description": "Whether burned-in subtitles are enabled" },
+        "sceneCount": { "type": "integer", "description": "Number of scenes" },
+        "status": { "type": "string", "enum": ["DRAFT", "GENERATING_SCRIPT", "GENERATING_IMAGES", "RENDERING_VIDEO", "COMPLETED", "FAILED"] },
+        "errorMessage": { "type": "string", "description": "Last failure reason if any" },
+        "scenesJson": { "type": "string", "description": "JSON array of scenes metadata" },
+        "localVideoPath": { "type": "string", "description": "Local MP4 file path" },
+        "localThumbnailPath": { "type": "string", "description": "Local thumbnail image path" },
+        "videoWidth": { "type": "integer", "description": "Output video width in px" },
+        "videoHeight": { "type": "integer", "description": "Output video height in px" },
+        "fileSizeBytes": { "type": "integer", "description": "Output MP4 size in bytes" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": [
+        "userId",
+        "title",
+        "mode",
+        "prompt",
+        "script",
+        "aspectRatio",
+        "durationSeconds",
+        "visualStyle",
+        "language",
+        "narrationEnabled",
+        "subtitlesEnabled",
+        "sceneCount",
+        "status",
+        "scenesJson",
+        "videoWidth",
+        "videoHeight",
+        "fileSizeBytes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "GeneratedImageItem": {
+      "title": "GeneratedImageItem",
+      "description": "Metadata for AI images generated or edited via Gemini Nano Banana 2.1",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "prompt": { "type": "string" },
+        "style": { "type": "string" },
+        "aspectRatio": { "type": "string", "enum": ["RATIO_9_16", "RATIO_16_9", "RATIO_1_1"] },
+        "editedFromSource": { "type": "boolean" },
+        "localImagePath": { "type": "string" },
+        "projectId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId",
+        "prompt",
+        "style",
+        "aspectRatio",
+        "editedFromSource",
+        "localImagePath",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "GenerationJob": {
+      "title": "GenerationJob",
+      "description": "Tracked asynchronous generation job for progress and recovery",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "projectId": { "type": "string" },
+        "jobType": { "type": "string", "enum": ["SCRIPT", "IMAGE", "VIDEO"] },
+        "status": { "type": "string", "enum": ["QUEUED", "RUNNING", "COMPLETED", "FAILED"] },
+        "progressPercent": { "type": "integer" },
+        "statusMessage": { "type": "string" },
+        "errorMessage": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId",
+        "projectId",
+        "jobType",
+        "status",
+        "progressPercent",
+        "statusMessage",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AppFeedback": {
+      "title": "AppFeedback",
+      "description": "User app rating and opinion submission",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "rating": { "type": "integer" },
+        "opinion": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId",
+        "rating",
+        "opinion",
+        "userEmail",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Owner-isolated user profile and daily quota metadata"
+    },
+    "/users/{userId}/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/VideoProject" },
+      "description": "Owner-isolated video creation projects"
+    },
+    "/users/{userId}/generated_images/{imageId}": {
+      "schema": { "$ref": "#/entities/GeneratedImageItem" },
+      "description": "Owner-isolated AI generated and edited images"
+    },
+    "/users/{userId}/generation_jobs/{jobId}": {
+      "schema": { "$ref": "#/entities/GenerationJob" },
+      "description": "Owner-isolated asynchronous generation jobs"
+    },
+    "/users/{userId}/app_feedback/{feedbackId}": {
+      "schema": { "$ref": "#/entities/AppFeedback" },
+      "description": "Owner-isolated app rating and feedback submissions"
+    }
+  }
+}

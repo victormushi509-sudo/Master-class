@@ -1,0 +1,270 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidAspectRatio(ratio) {
+      return ratio in ['RATIO_9_16', 'RATIO_16_9', 'RATIO_1_1'];
+    }
+
+    function isValidProjectMode(mode) {
+      return mode in ['PROMPT', 'SCRIPT', 'ANIMATE_PHOTO'];
+    }
+
+    function isValidProjectStatus(status) {
+      return status in ['DRAFT', 'GENERATING_SCRIPT', 'GENERATING_IMAGES', 'RENDERING_VIDEO', 'COMPLETED', 'FAILED'];
+    }
+
+    function isValidJobType(jobType) {
+      return jobType in ['SCRIPT', 'IMAGE', 'VIDEO'];
+    }
+
+    function isValidJobStatus(status) {
+      return status in ['QUEUED', 'RUNNING', 'COMPLETED', 'FAILED'];
+    }
+
+    function isValidUserProfile(data, userId) {
+      return data.userId is string && data.userId == userId &&
+             data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+             data.email is string && data.email.size() <= 120 &&
+             data.preferredStyle is string && data.preferredStyle.size() >= 1 && data.preferredStyle.size() <= 50 &&
+             data.preferredLanguage is string && data.preferredLanguage.size() >= 1 && data.preferredLanguage.size() <= 40 &&
+             data.dailyQuotaUsed is int && data.dailyQuotaUsed >= 0 && data.dailyQuotaUsed <= 1000 &&
+             data.dailyQuotaLimit is int && data.dailyQuotaLimit >= 1 && data.dailyQuotaLimit <= 1000 &&
+             data.quotaDateKey is string && data.quotaDateKey.size() >= 1 && data.quotaDateKey.size() <= 20 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidVideoProject(data, userId) {
+      return data.userId is string && data.userId == userId &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 120 &&
+             data.mode is string && isValidProjectMode(data.mode) &&
+             data.prompt is string && data.prompt.size() <= 2000 &&
+             data.script is string && data.script.size() <= 8000 &&
+             data.aspectRatio is string && isValidAspectRatio(data.aspectRatio) &&
+             data.durationSeconds is int && data.durationSeconds >= 3 && data.durationSeconds <= 180 &&
+             data.visualStyle is string && data.visualStyle.size() >= 1 && data.visualStyle.size() <= 50 &&
+             data.language is string && data.language.size() >= 1 && data.language.size() <= 40 &&
+             data.narrationEnabled is bool &&
+             data.subtitlesEnabled is bool &&
+             data.sceneCount is int && data.sceneCount >= 1 && data.sceneCount <= 8 &&
+             data.status is string && isValidProjectStatus(data.status) &&
+             (!('errorMessage' in data) || data.errorMessage == null || (data.errorMessage is string && data.errorMessage.size() <= 500)) &&
+             data.scenesJson is string && data.scenesJson.size() <= 30000 &&
+             (!('localVideoPath' in data) || data.localVideoPath == null || (data.localVideoPath is string && data.localVideoPath.size() <= 500)) &&
+             (!('localThumbnailPath' in data) || data.localThumbnailPath == null || (data.localThumbnailPath is string && data.localThumbnailPath.size() <= 500)) &&
+             data.videoWidth is int && data.videoWidth >= 0 && data.videoWidth <= 4096 &&
+             data.videoHeight is int && data.videoHeight >= 0 && data.videoHeight <= 4096 &&
+             data.fileSizeBytes is int && data.fileSizeBytes >= 0 && data.fileSizeBytes <= 500000000 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidGeneratedImage(data, userId) {
+      return data.userId is string && data.userId == userId &&
+             data.prompt is string && data.prompt.size() >= 1 && data.prompt.size() <= 1500 &&
+             data.style is string && data.style.size() >= 1 && data.style.size() <= 50 &&
+             data.aspectRatio is string && isValidAspectRatio(data.aspectRatio) &&
+             data.editedFromSource is bool &&
+             data.localImagePath is string && data.localImagePath.size() >= 1 && data.localImagePath.size() <= 500 &&
+             (!('projectId' in data) || data.projectId == null || (data.projectId is string && data.projectId.size() <= 128)) &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidGenerationJob(data, userId) {
+      return data.userId is string && data.userId == userId &&
+             data.projectId is string && data.projectId.size() <= 128 &&
+             data.jobType is string && isValidJobType(data.jobType) &&
+             data.status is string && isValidJobStatus(data.status) &&
+             data.progressPercent is int && data.progressPercent >= 0 && data.progressPercent <= 100 &&
+             data.statusMessage is string && data.statusMessage.size() <= 250 &&
+             (!('errorMessage' in data) || data.errorMessage == null || (data.errorMessage is string && data.errorMessage.size() <= 500)) &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidAppFeedback(data, userId) {
+      return data.userId is string && data.userId == userId &&
+             data.rating is int && data.rating >= 1 && data.rating <= 5 &&
+             data.opinion is string && data.opinion.size() >= 1 && data.opinion.size() <= 1500 &&
+             data.userEmail is string && data.userEmail.size() <= 120 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    match /users/{userId} {
+      allow get: if isOwner(userId) && isValidId(userId);
+
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       incoming().keys().hasAll([
+                         'userId', 'displayName', 'email', 'preferredStyle',
+                         'preferredLanguage', 'dailyQuotaUsed', 'dailyQuotaLimit',
+                         'quotaDateKey', 'createdAt', 'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId', 'displayName', 'email', 'preferredStyle',
+                         'preferredLanguage', 'dailyQuotaUsed', 'dailyQuotaLimit',
+                         'quotaDateKey', 'createdAt', 'updatedAt'
+                       ]) &&
+                       isValidUserProfile(incoming(), userId);
+
+      allow update: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       isValidUserProfile(incoming(), userId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly([
+                         'displayName', 'preferredStyle', 'preferredLanguage',
+                         'dailyQuotaUsed', 'quotaDateKey', 'updatedAt'
+                       ]);
+
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      match /projects/{projectId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId) && isValidId(projectId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(projectId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'title', 'mode', 'prompt', 'script',
+                           'aspectRatio', 'durationSeconds', 'visualStyle', 'language',
+                           'narrationEnabled', 'subtitlesEnabled', 'sceneCount',
+                           'status', 'scenesJson', 'videoWidth', 'videoHeight',
+                           'fileSizeBytes', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'title', 'mode', 'prompt', 'script',
+                           'aspectRatio', 'durationSeconds', 'visualStyle', 'language',
+                           'narrationEnabled', 'subtitlesEnabled', 'sceneCount',
+                           'status', 'errorMessage', 'scenesJson', 'localVideoPath',
+                           'localThumbnailPath', 'videoWidth', 'videoHeight',
+                           'fileSizeBytes', 'createdAt', 'updatedAt'
+                         ]) &&
+                         isValidVideoProject(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(projectId) &&
+                         isValidVideoProject(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         (
+                           incoming().diff(existing()).affectedKeys().hasOnly(['title', 'updatedAt']) ||
+                           incoming().diff(existing()).affectedKeys().hasOnly([
+                             'title', 'mode', 'prompt', 'script', 'aspectRatio',
+                             'durationSeconds', 'visualStyle', 'language',
+                             'narrationEnabled', 'subtitlesEnabled', 'sceneCount',
+                             'status', 'errorMessage', 'scenesJson', 'localVideoPath',
+                             'localThumbnailPath', 'videoWidth', 'videoHeight',
+                             'fileSizeBytes', 'updatedAt'
+                           ])
+                         );
+
+        allow delete: if isOwner(userId) && isValidId(projectId);
+      }
+
+      match /generated_images/{imageId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId) && isValidId(imageId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(imageId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'prompt', 'style', 'aspectRatio',
+                           'editedFromSource', 'localImagePath', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'prompt', 'style', 'aspectRatio',
+                           'editedFromSource', 'localImagePath', 'projectId',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         isValidGeneratedImage(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(imageId) &&
+                         isValidGeneratedImage(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'projectId', 'updatedAt'
+                         ]);
+
+        allow delete: if isOwner(userId) && isValidId(imageId);
+      }
+
+      match /generation_jobs/{jobId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId) && isValidId(jobId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(jobId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'projectId', 'jobType', 'status',
+                           'progressPercent', 'statusMessage', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'projectId', 'jobType', 'status',
+                           'progressPercent', 'statusMessage', 'errorMessage',
+                           'createdAt', 'updatedAt'
+                         ]) &&
+                         isValidGenerationJob(incoming(), userId);
+
+        allow update: if isOwner(userId) &&
+                         isValidId(jobId) &&
+                         isValidGenerationJob(incoming(), userId) &&
+                         incoming().userId == existing().userId &&
+                         incoming().createdAt == existing().createdAt &&
+                         existing().status != 'COMPLETED' &&
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'status', 'progressPercent', 'statusMessage', 'errorMessage', 'updatedAt'
+                         ]);
+
+        allow delete: if isOwner(userId) && isValidId(jobId);
+      }
+
+      match /app_feedback/{feedbackId} {
+        allow list: if isOwner(userId);
+        allow get: if isOwner(userId) && isValidId(feedbackId);
+
+        allow create: if isOwner(userId) &&
+                         isValidId(feedbackId) &&
+                         incoming().keys().hasAll([
+                           'userId', 'rating', 'opinion', 'userEmail', 'createdAt', 'updatedAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'userId', 'rating', 'opinion', 'userEmail', 'createdAt', 'updatedAt'
+                         ]) &&
+                         isValidAppFeedback(incoming(), userId);
+
+        allow delete: if isOwner(userId) && isValidId(feedbackId);
+      }
+    }
+  }
+}

@@ -1,52 +1,58 @@
 package com.example.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
-private val DarkColorScheme =
-  darkColorScheme(primary = Purple80, secondary = PurpleGrey80, tertiary = Pink80)
+private val VictorDarkColorScheme = darkColorScheme(
+    primary = ElectricBlue,
+    onPrimary = InkPrimary,
+    primaryContainer = ElectricBlueContainer,
+    onPrimaryContainer = ElectricBlueBright,
+    secondary = ElectricCyan,
+    onSecondary = NavyVoid,
+    secondaryContainer = NavyHigh,
+    onSecondaryContainer = InkPrimary,
+    tertiary = ElectricBlueBright,
+    onTertiary = NavyVoid,
+    background = NavyBase,
+    onBackground = InkPrimary,
+    surface = NavySurface,
+    onSurface = InkPrimary,
+    surfaceVariant = NavyElevated,
+    onSurfaceVariant = InkSecondary,
+    surfaceContainerLowest = NavyVoid,
+    surfaceContainerLow = NavyBase,
+    surfaceContainer = NavySurface,
+    surfaceContainerHigh = NavyElevated,
+    surfaceContainerHighest = NavyHigh,
+    outline = NavyBorder,
+    outlineVariant = NavyElevated,
+    error = StatusError,
+    onError = InkPrimary,
+    errorContainer = StatusErrorContainer,
+    onErrorContainer = InkPrimary
+)
 
-private val LightColorScheme =
-  lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-  )
+val VictorShapes = Shapes(
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(12.dp),
+    medium = RoundedCornerShape(16.dp),
+    large = RoundedCornerShape(22.dp),
+    extraLarge = RoundedCornerShape(28.dp)
+)
 
 @Composable
-fun MyApplicationTheme(
-  darkTheme: Boolean = isSystemInDarkTheme(),
-  // Dynamic color is available on Android 12+
-  dynamicColor: Boolean = true,
-  content: @Composable () -> Unit,
+fun VictorVideoTheme(
+    content: @Composable () -> Unit
 ) {
-  val colorScheme =
-    when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-        val context = LocalContext.current
-        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      }
-
-      darkTheme -> DarkColorScheme
-      else -> LightColorScheme
-    }
-
-  MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)
+    MaterialTheme(
+        colorScheme = VictorDarkColorScheme,
+        typography = VictorTypography,
+        shapes = VictorShapes,
+        content = content
+    )
 }

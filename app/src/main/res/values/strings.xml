@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">Victor Video</string>
+    <string name="brand_full_title">VICTOR.FREE.VIDEO BUILDER</string>
+    <string name="brand_tagline">Simple Interface. Powerful AI. Real Videos.</string>
+
+    <string name="nav_create">Create</string>
+    <string name="nav_images">Images</string>
+    <string name="nav_projects">Projects</string>
+    <string name="nav_gallery">Gallery</string>
+    <string name="nav_account">Account</string>
+
+    <string name="auth_welcome_title">Create Real AI Videos</string>
+    <string name="auth_welcome_subtitle">Turn prompts, scripts, and photos into narrated MP4 videos with Gemini AI and on-device H.264 rendering.</string>
+    <string name="auth_sign_in_google">Sign in with Google</string>
+    <string name="auth_free_first_note">Free-First Access: Includes 12 free AI generations daily per account with private cloud project sync.</string>
+
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_quota_exhausted">Daily free quota reached (%1$d/%2$d). Your free quota resets tomorrow.</string>
+    <string name="contact_email_primary">victormushi490@gmail.com</string>
+    <string name="contact_email_secondary">victormushi509@gmail.com</string>
+    <string name="contact_phone">+255651414083</string>
 </resources>
