@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Victor Video - AI Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0d14;
+      --bg-card: #121826;
+      --bg-card-hover: #182238;
+      --accent-blue: #0066ff;
+      --accent-cyan: #00d2ff;
+      --accent-glow: rgba(0, 210, 255, 0.25);
+      --text-main: #f3f6fc;
+      --text-muted: #8e9bb5;
+      --border-color: #23304c;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(10, 13, 20, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #fff;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .brand-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      background-color: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+
+    .hero-section {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 3.5rem auto;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      background: rgba(0, 102, 255, 0.12);
+      border: 1px solid rgba(0, 102, 255, 0.3);
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.75rem;
+      line-height: 1.15;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .studio-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      margin-bottom: 3rem;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    textarea, select, input {
+      width: 100%;
+      background: #0d121c;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    textarea:focus, select:focus, input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .grid-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, var(--accent-blue), #0052cc);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.9rem 1.8rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(0, 102, 255, 0.4);
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1a75ff, var(--accent-blue));
+      transform: translateY(-1px);
+    }
+
+    .output-preview {
+      display: none;
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      border-radius: 10px;
+      background: #090e18;
+      border: 1px solid var(--border-color);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-blue);
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: rgba(0, 102, 255, 0.15);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <a href="/" class="brand">
+        <div class="brand-logo">V</div>
+        <div class="brand-name">Victor Video AI</div>
+      </a>
+      <div class="status-badge">
+        <div class="status-dot"></div>
+        Studio Active
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-section">
+      <div class="hero-badge">AI Video Creation & Studio Hub</div>
+      <h1>Create Cinematic AI Videos & Media in Seconds</h1>
+      <p class="hero-subtitle">Turn your creative prompts, stories, and ideas into multi-scene video scripts, animations, and high-fidelity visuals powered by AI.</p>
+    </section>
+
+    <section class="studio-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>✨</span> Create New Video Project
+        </div>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Quick Generator</span>
+      </div>
+
+      <form id="studio-form" onsubmit="event.preventDefault(); handleGenerate();">
+        <div class="form-group">
+          <label for="prompt">Video Prompt or Story Concept</label>
+          <textarea id="prompt" rows="3" placeholder="e.g. A futuristic cyberpunk city in 2099 with flying vehicles and glowing neon rain..." required></textarea>
+        </div>
+
+        <div class="grid-options">
+          <div class="form-group">
+            <label for="aspect-ratio">Aspect Ratio</label>
+            <select id="aspect-ratio">
+              <option value="9:16">9:16 (TikTok, Reels, Shorts)</option>
+              <option value="16:9" selected>16:9 (Landscape / YouTube)</option>
+              <option value="1:1">1:1 (Square)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="style">Visual Style</label>
+            <select id="style">
+              <option value="cinematic">Cinematic Hyper-Realistic</option>
+              <option value="anime">Anime / Manga</option>
+              <option value="cyberpunk">Cyberpunk Neon</option>
+              <option value="3d-render">3D Render Studio</option>
+              <option value="vintage">Vintage Film</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="duration">Target Duration</label>
+            <select id="duration">
+              <option value="15">15 Seconds (Short)</option>
+              <option value="30" selected>30 Seconds (Standard)</option>
+              <option value="60">60 Seconds (Full)</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="generate-btn">
+          <span>🚀</span> Generate Storyboard & Script
+        </button>
+      </form>
+
+      <div id="output-preview" class="output-preview">
+        <h3 style="font-size: 1rem; color: var(--accent-cyan); margin-bottom: 0.75rem;">🎬 Generated Scenes & Production Plan</h3>
+        <div id="output-content" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;"></div>
+      </div>
+    </section>
+
+    <section class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Fast AI Generation</div>
+        <div class="feature-desc">Generate scene breakdowns, narrations, and custom image prompts instantly.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Cross-Platform Sync</div>
+        <div class="feature-desc">Integrated with Firebase and the Victor Video Android companion studio app.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-title">Multiple Aspect Ratios</div>
+        <div class="feature-desc">Ready for 9:16 vertical storytelling or 16:9 widescreen cinematic productions.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Victor Video AI Studio. Connected to Netlify and deployed live.
+  </footer>
+
+  <script>
+    function handleGenerate() {
+      const prompt = document.getElementById('prompt').value;
+      const ratio = document.getElementById('aspect-ratio').value;
+      const style = document.getElementById('style').value;
+      const duration = document.getElementById('duration').value;
+      const btn = document.getElementById('generate-btn');
+      const output = document.getElementById('output-preview');
+      const content = document.getElementById('output-content');
+
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> Generating Storyboard...';
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🚀</span> Generate Storyboard & Script';
+        output.style.display = 'block';
+        content.innerHTML = `
+          <div style="background: rgba(0, 102, 255, 0.08); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--accent-cyan); margin-bottom: 1rem;">
+            <strong style="color: #fff;">Concept:</strong> "${escapeHtml(prompt)}"<br>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Settings: Style: ${style} | Aspect: ${ratio} | Target: ${duration}s</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="padding: 0.75rem; background: #121826; border-radius: 6px;">
+              <strong style="color: var(--accent-cyan);">Scene 1: Establishing Shot</strong>
+              <p style="margin-top: 0.25rem;">Camera swoops dynamically across the scene capturing the atmosphere and theme.</p>
+            </div>
+            <div style="padding: 0.75rem; background: #121826; border-radius: 6px;">
+              <strong style="color: var(--accent-cyan);">Scene 2: Core Action</strong>
+              <p style="margin-top: 0.25rem;">Key visual focal point emerges with cinematic lighting and rhythmic pace.</p>
+            </div>
+            <div style="padding: 0.75rem; background: #121826; border-radius: 6px;">
+              <strong style="color: var(--accent-cyan);">Scene 3: Climax & Resolution</strong>
+              <p style="margin-top: 0.25rem;">Seamless transition concluding with high-impact visuals and title card overlay.</p>
+            </div>
+          </div>
+        `;
+        output.scrollIntoView({ behavior: 'smooth' });
+      }, 700);
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>
