@@ -1,0 +1,6 @@
+{
+  "name": "Victor Video",
+  "description": "AI video creation and image generation Android app with dark navy and electric-blue studio UI, Firebase Auth, Firestore projects, and Gemini AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
